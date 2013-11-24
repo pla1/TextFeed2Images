@@ -24,7 +24,7 @@ public class DrawText {
         .execute(
             file,
             "U.S. government rarely uses best cybersecurity steps: advisers",
-            "WASHINGTON (Reuters) - The U.S. government itself seldom follows the best cybersecurity practices and must drop its old operating systems and unsecured browsers as it tries to push the private sector to tighten its practices, technology advisers told President Barack Obama.",
+            "NASA astronaut Tom Marshburn and Vickie Kloeris, the agency&#039;s manager of the International Space Station food system, will discuss the space station&#039;s Thanksgiving menus in live satellite interviews from 7- 8:30 a.m. EST Wednesday, Nov. 27.",
             "November 22, 2013");
     System.out.println(fileName);
     Runtime.getRuntime().exec("xdg-open " + fileName);

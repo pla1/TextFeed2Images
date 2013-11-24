@@ -25,7 +25,7 @@
 			<path pathversion="1">rss://xbmc-rocks.com/go?q=http://feeds.reuters.com/reuters/technologyNews</path>
 			<allowsharing>true</allowsharing>
 		</source>
-				<source>
+		<source>
 			<name>Reuters Top News</name>
 			<path pathversion="1">rss://xbmc-rocks.com/go?q=http://feeds.reuters.com/reuters/topNews</path>
 			<allowsharing>true</allowsharing>
