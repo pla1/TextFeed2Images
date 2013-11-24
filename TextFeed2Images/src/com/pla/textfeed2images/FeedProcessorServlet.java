@@ -72,6 +72,7 @@ public class FeedProcessorServlet extends HttpServlet {
     ArrayList<Item> items = new ArrayList<Item>();
     String baseUrlString = getBaseUrlString(request);
     DrawText drawText = new DrawText();
+    String channelTitle = null;
     try {
       String description = "";
       String title = "";
@@ -85,6 +86,9 @@ public class FeedProcessorServlet extends HttpServlet {
           String localPart = event.asStartElement().getName().getLocalPart();
           if (localPart.equals(TITLE)) {
             title = getCharacterData(event, eventReader);
+            if (channelTitle == null) {
+              channelTitle = title;
+            }
           }
           if (localPart.equals(DESCRIPTION)) {
             description = getCharacterData(event, eventReader);
@@ -136,13 +140,21 @@ public class FeedProcessorServlet extends HttpServlet {
       throw new RuntimeException(e);
     }
     try {
-      writeNewFeed(request, response, items);
+      writeNewFeed(request, response, channelTitle, items);
     } catch (XMLStreamException e) {
       e.printStackTrace();
     }
   }
 
-  public void writeNewFeed(HttpServletRequest request, HttpServletResponse response, ArrayList<Item> items)
+  private String getUrlString(HttpServletRequest request) {
+    StringBuffer requestURL = request.getRequestURL();
+    if (request.getQueryString() != null) {
+      requestURL.append("?").append(request.getQueryString());
+    }
+    return requestURL.toString();
+  }
+
+  public void writeNewFeed(HttpServletRequest request, HttpServletResponse response, String channelTitle, ArrayList<Item> items)
       throws ServletException, IOException, XMLStreamException {
     XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
     XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(response.getOutputStream());
@@ -157,8 +169,11 @@ public class FeedProcessorServlet extends HttpServlet {
     eventWriter.add(end);
     eventWriter.add(eventFactory.createStartElement(BLANK, BLANK, "channel"));
     eventWriter.add(end);
-    createNode(eventWriter, "title", "Text Feed To Images");
-    createNode(eventWriter, "link", "http://xbmc-rocks.com");
+    if (isBlank(channelTitle)) {
+      channelTitle = "RSS Feed To Images";
+    }
+    createNode(eventWriter, "title", channelTitle);
+    createNode(eventWriter, "link", getUrlString(request));
     createNode(
         eventWriter,
         "description",
