@@ -1,0 +1,42 @@
+<sources>
+	<programs>
+		<default pathversion="1"></default>
+	</programs>
+	<video>
+		<default pathversion="1"></default>
+	</video>
+	<music>
+		<default pathversion="1"></default>
+	</music>
+	<pictures>
+		<default pathversion="1"></default>
+		<source>
+			<name>NPR Digital Culture</name>
+			<path pathversion="1">rss://xbmc-rocks.com/go?q=http://www.npr.org/rss/rss.php?id=1049</path>
+			<allowsharing>true</allowsharing>
+		</source>
+		<source>
+			<name>Reuters Sports News</name>
+			<path pathversion="1">rss://xbmc-rocks.com/go?q=http://feeds.reuters.com/reuters/sportsNews</path>
+			<allowsharing>true</allowsharing>
+		</source>
+		<source>
+			<name>Reuters Technology News</name>
+			<path pathversion="1">rss://xbmc-rocks.com/go?q=http://feeds.reuters.com/reuters/technologyNews</path>
+			<allowsharing>true</allowsharing>
+		</source>
+				<source>
+			<name>Reuters Top News</name>
+			<path pathversion="1">rss://xbmc-rocks.com/go?q=http://feeds.reuters.com/reuters/topNews</path>
+			<allowsharing>true</allowsharing>
+		</source>
+		<source>
+			<name>Reuters Top Sports</name>
+			<path pathversion="1">rss://xbmc-rocks.com/go?q=http://feeds.reuters.com/reuters/sportsNews</path>
+			<allowsharing>true</allowsharing>
+		</source>
+	</pictures>
+	<files>
+		<default pathversion="1"></default>
+	</files>
+</sources>
