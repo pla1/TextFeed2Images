@@ -8,7 +8,10 @@
 		<mkdir dir="war/WEB-INF/classes" />
 		<mkdir dir="war/images" />
 		<copy file="index.html" todir="war/" />
+		<copy file="NFL1920x1080.png" todir="war/" />
+		<copy file="WEB-INF/NFL1920x1080Transparent.png" todir="war/WEB-INF" />
 		<copy file="WEB-INF/web.xml" todir="war/WEB-INF" />
+		<copy file="WEB-INF/lib/postgresql-9.3-1100.jdbc4.jar" todir="war/WEB-INF/lib" />
 		<copy todir="war/WEB-INF/classes">
 			<fileset dir="bin" />
 			<fileset dir="src" />

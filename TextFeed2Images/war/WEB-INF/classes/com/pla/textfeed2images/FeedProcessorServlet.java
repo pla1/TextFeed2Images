@@ -37,12 +37,7 @@ public class FeedProcessorServlet extends HttpServlet {
     doGet(request, response);
   }
 
-  private boolean isBlank(String s) {
-    if (s == null || s.trim().length() == 0) {
-      return true;
-    }
-    return false;
-  }
+ 
 
   private String getBaseUrlString(HttpServletRequest request) {
     StringBuilder sb = new StringBuilder();
@@ -61,10 +56,10 @@ public class FeedProcessorServlet extends HttpServlet {
 
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     String feedUrl = request.getParameter("q");
-    if (isBlank(feedUrl)) {
+    if (Util.isBlank(feedUrl)) {
       feedUrl = request.getParameter("feedUrl");
     }
-    if (isBlank(feedUrl)) {
+    if (Util.isBlank(feedUrl)) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing feedUrl parameter");
       return;
     }
@@ -103,7 +98,7 @@ public class FeedProcessorServlet extends HttpServlet {
               if (true) {
                 String path = getServletContext().getRealPath(".");
                 if (!"localhost".equals(request.getServerName())) {
-                  path = "/var/lib/tomcat6/webapps/TextFeed2Images";
+                  path = "/var/lib/tomcat7/webapps/TextFeed2Images";
                 }
                 int hashcode = (title + description + pubdate).hashCode();
                 String fileName = hashcode + ".png";
@@ -169,7 +164,7 @@ public class FeedProcessorServlet extends HttpServlet {
     eventWriter.add(end);
     eventWriter.add(eventFactory.createStartElement(BLANK, BLANK, "channel"));
     eventWriter.add(end);
-    if (isBlank(channelTitle)) {
+    if (Util.isBlank(channelTitle)) {
       channelTitle = "RSS Feed To Images";
     }
     createNode(eventWriter, "title", channelTitle);
