@@ -24,7 +24,8 @@ public class NFLCurrentScoresImageServlet extends HttpServlet {
     System.out.println("NFL Background: " + NFLbackgroundImagePath + " " + games.size() + " games. Date: " + new Date() + " "
         + this.getClass().getCanonicalName());
     InputStream nflBackgroundImageInputStream = getServletContext().getResourceAsStream(NFLbackgroundImagePath);
-    BufferedImage bufferedImage = Util.toBufferedImage(games, nflBackgroundImageInputStream);
+    NFLWeekImage nflWeekImage = new NFLWeekImage(games, nflBackgroundImageInputStream);
+    BufferedImage bufferedImage = nflWeekImage.getBufferedImage();
     ImageIO.write(bufferedImage, "png", response.getOutputStream());
   }
 

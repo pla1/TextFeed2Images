@@ -18,7 +18,8 @@ public class Game {
   private int year;
   private String awayTeam;
   private int awayPoints;
-  private Date date; 
+  private Date date;
+  private boolean finished = false;
 
   public Game() {
   }
@@ -196,4 +197,13 @@ public class Game {
   public void setDate(Date date) {
     this.date = date;
   }
+
+  public boolean isFinished() {
+    return finished;
+  }
+
+  public void setFinished(boolean finished) {
+    this.finished = finished;
+  }
+
 }

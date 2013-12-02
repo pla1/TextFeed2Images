@@ -101,11 +101,11 @@ public class StartupServlet extends HttpServlet {
     StartDocument startDocument = eventFactory.createStartDocument();
     eventWriter.add(startDocument);
     eventWriter.add(end);
-    StartElement rssStart = eventFactory.createStartElement(Util.BLANK, Util.BLANK, "rss");
+    StartElement rssStart = eventFactory.createStartElement(Constants.BLANK, Constants.BLANK, "rss");
     eventWriter.add(rssStart);
     eventWriter.add(eventFactory.createAttribute("version", "2.0"));
     eventWriter.add(end);
-    eventWriter.add(eventFactory.createStartElement(Util.BLANK, Util.BLANK, "channel"));
+    eventWriter.add(eventFactory.createStartElement(Constants.BLANK, Constants.BLANK, "channel"));
     eventWriter.add(end);
     createNode(eventWriter, "title", "NFL Scores");
     createNode(eventWriter, "link", "http://xbmc-rocks.com/nfl.rss");
@@ -122,23 +122,24 @@ public class StartupServlet extends HttpServlet {
         weekOfGames.add(game);
       } else {
         InputStream nflBackgroundImageInputStream = getServletContext().getResourceAsStream(NFLbackgroundImagePath);
-        BufferedImage bufferedImage = Util.toBufferedImage(weekOfGames, nflBackgroundImageInputStream);
+        NFLWeekImage nflWeekImage = new NFLWeekImage(weekOfGames, nflBackgroundImageInputStream);
+        BufferedImage bufferedImage = nflWeekImage.getBufferedImage();
         String imageFileName = path + "images/" + weekOfGames.get(0).getImageFileName();
         File imageFile = new File(imageFileName);
         System.out.println("About to write: " + imageFile.getAbsolutePath());
         ImageIO.write(bufferedImage, "png", imageFile);
-        eventWriter.add(eventFactory.createStartElement(Util.BLANK, Util.BLANK, "item"));
+        eventWriter.add(eventFactory.createStartElement(Constants.BLANK, Constants.BLANK, "item"));
         eventWriter.add(end);
         String title = Util.getNFLWeekTitle(weekOfGames);
-        createNode(eventWriter, Util.TITLE, title);
-        createNode(eventWriter, Util.DESCRIPTION, title);
+        createNode(eventWriter, Constants.TITLE, title);
+        createNode(eventWriter, Constants.DESCRIPTION, title);
         if (Util.isNFLWeeInProgress(weekOfGames)) {
-          createNode(eventWriter, Util.LINK, urlBase + "NFLCurrentScoresImageServlet.png");
+          createNode(eventWriter, Constants.LINK, urlBase + "NFLCurrentScoresImageServlet.png");
         } else {
-          createNode(eventWriter, Util.LINK, urlBase + "images/" + weekOfGames.get(0).getImageFileName());
+          createNode(eventWriter, Constants.LINK, urlBase + "images/" + weekOfGames.get(0).getImageFileName());
         }
         eventWriter.add(end);
-        eventWriter.add(eventFactory.createEndElement(Util.BLANK, Util.BLANK, "item"));
+        eventWriter.add(eventFactory.createEndElement(Constants.BLANK, Constants.BLANK, "item"));
         eventWriter.add(end);
         weekOfGames = new ArrayList<Game>();
         weekOfGames.add(game);
@@ -147,9 +148,9 @@ public class StartupServlet extends HttpServlet {
       }
     }
     eventWriter.add(end);
-    eventWriter.add(eventFactory.createEndElement(Util.BLANK, Util.BLANK, "channel"));
+    eventWriter.add(eventFactory.createEndElement(Constants.BLANK, Constants.BLANK, "channel"));
     eventWriter.add(end);
-    eventWriter.add(eventFactory.createEndElement(Util.BLANK, Util.BLANK, "rss"));
+    eventWriter.add(eventFactory.createEndElement(Constants.BLANK, Constants.BLANK, "rss"));
     eventWriter.add(end);
     eventWriter.add(eventFactory.createEndDocument());
     eventWriter.close();
@@ -159,12 +160,12 @@ public class StartupServlet extends HttpServlet {
     XMLEventFactory eventFactory = XMLEventFactory.newInstance();
     XMLEvent end = eventFactory.createDTD("\n");
     XMLEvent tab = eventFactory.createDTD("\t");
-    StartElement sElement = eventFactory.createStartElement(Util.BLANK, Util.BLANK, name);
+    StartElement sElement = eventFactory.createStartElement(Constants.BLANK, Constants.BLANK, name);
     eventWriter.add(tab);
     eventWriter.add(sElement);
     Characters characters = eventFactory.createCharacters(value);
     eventWriter.add(characters);
-    EndElement eElement = eventFactory.createEndElement(Util.BLANK, Util.BLANK, name);
+    EndElement eElement = eventFactory.createEndElement(Constants.BLANK, Constants.BLANK, name);
     eventWriter.add(eElement);
     eventWriter.add(end);
   }

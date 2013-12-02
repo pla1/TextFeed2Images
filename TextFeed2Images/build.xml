@@ -6,17 +6,19 @@
 	<target name="build" depends="clean">
 		<mkdir dir="war/WEB-INF/lib" />
 		<mkdir dir="war/WEB-INF/classes" />
+		<mkdir dir="war/WEB-INF/resources" />
 		<mkdir dir="war/images" />
 		<copy file="index.html" todir="war/" />
 		<copy file="NFL1920x1080.png" todir="war/" />
-		<copy file="WEB-INF/NFL1920x1080Transparent.png" todir="war/WEB-INF" />
 		<copy file="WEB-INF/web.xml" todir="war/WEB-INF" />
 		<copy file="WEB-INF/lib/postgresql-9.3-1100.jdbc4.jar" todir="war/WEB-INF/lib" />
 		<copy todir="war/WEB-INF/classes">
 			<fileset dir="bin" />
 			<fileset dir="src" />
 		</copy>
-
+		<copy todir="war/WEB-INF/resources">
+			<fileset dir="WEB-INF/resources" />
+		</copy>
 	</target>
 	<target name="war" depends="build" description="Create a war file">
 		<zip destfile="TextFeed2Images.war" basedir="war" />
