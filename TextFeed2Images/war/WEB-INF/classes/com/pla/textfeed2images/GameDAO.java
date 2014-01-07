@@ -12,7 +12,7 @@ public class GameDAO {
 
   public static void main(String[] args) {
     GameDAO dao = new GameDAO();
-    if (true) {
+    if (false) {
       int[] years = dao.getYears();
       for (int i : years) {
         System.out.println(i);
@@ -20,11 +20,12 @@ public class GameDAO {
       System.exit(0);
     }
     if (false) {
-      System.out.println("Year: " + dao.getCurrentYear());
+      System.out.println("Current year: " + dao.getCurrentYear());
+      System.out.println("Current week: " + dao.getCurrentWeek());
       System.exit(0);
     }
-    if (false) {
-      ArrayList<Game> games = dao.getGames();
+    if (true) {
+      ArrayList<Game> games = dao.getGamesThisWeek();
       for (Game game : games) {
         System.out.println(game + " " + game.getDate());
       }
@@ -54,8 +55,33 @@ public class GameDAO {
   }
 
   public ArrayList<Game> getGamesThisWeek() {
-    int week = getCurrentWeek();
-    return getGames(week);
+    ArrayList<Game> games = new ArrayList<Game>();
+    Connection connection = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    try {
+      connection = Util.getConnection();
+      ps = connection
+          .prepareStatement("select a.*, date(a.start_time) as gamedate,  b.name as home_team_name, c.name as away_team_name, start_time > current_timestamp as pending from game as a "
+              + "join team as b on a.home_team = b.team_id join team as c on a.away_team = c.team_id where date(start_time) <= current_date "
+              + "order by start_time desc");
+      rs = ps.executeQuery();
+      boolean done = false;
+      int week = 0;
+      while (rs.next() && !done) {
+        if (week != 0 && week != rs.getInt("week")) {
+          done = true;
+        } else {
+          week = rs.getInt("week");
+          games.add(transfer(rs));
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      Util.close(rs, ps, connection);
+    }
+    return games;
   }
 
   public int[] getYears() {

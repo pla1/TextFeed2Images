@@ -1,6 +1,7 @@
 package com.pla.textfeed2images;
 
 import java.awt.GraphicsEnvironment;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.sql.Connection;
@@ -27,6 +28,14 @@ public class Util {
       return true;
     }
     return false;
+  }
+
+  public static void runCommand(String s) {
+    try {
+      Runtime.getRuntime().exec(s);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   public static boolean isNFLWeeInProgress(ArrayList<Game> games) {

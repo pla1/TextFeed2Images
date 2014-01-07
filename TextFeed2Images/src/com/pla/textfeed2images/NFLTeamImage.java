@@ -3,6 +3,7 @@ package com.pla.textfeed2images;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
@@ -39,7 +40,7 @@ public class NFLTeamImage {
 
   public static void main(String[] args) throws Exception {
     NFLTeamImage nflTeamImage = new NFLTeamImage();
-    if (Util.isDevelopmentEnvironment()) {
+    if (Util.isDevelopmentEnvironment() || (args.length > 0 && "test".equals(args[0]))) {
       GameDAO gameDAO = new GameDAO();
       ArrayList<Game> games = gameDAO.getGames(2013, "CAR");
       File backgroundFile = new File("/home/htplainf/apache-tomcat-7.0.42/webapps/TextFeed2Images/WEB-INF/resources/CAR.jpg");
@@ -66,7 +67,15 @@ public class NFLTeamImage {
     createFeeds(years, teams);
     createImages(years, teams);
   }
-
+  private void loadFonts() {
+    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    try {
+      ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("/usr/share/fonts/truetype/msttcorefonts/Arial.ttf")));
+      ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("/usr/share/fonts/truetype/msttcorefonts/Arial_Bold.ttf")));
+    } catch (Exception e2) {
+      e2.printStackTrace();
+    }
+  }
   private void createNode(XMLEventWriter eventWriter, String name, String value) throws XMLStreamException {
     XMLEventFactory eventFactory = XMLEventFactory.newInstance();
     XMLEvent end = eventFactory.createDTD("\n");
@@ -140,6 +149,7 @@ public class NFLTeamImage {
   }
 
   private void createImages(int[] years, ArrayList<Team> teams) throws Exception {
+    loadFonts();
     GameDAO gameDAO = new GameDAO();
     for (int year : years) {
       for (Team team : teams) {
