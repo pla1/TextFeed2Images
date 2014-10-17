@@ -37,8 +37,6 @@ public class FeedProcessorServlet extends HttpServlet {
     doGet(request, response);
   }
 
- 
-
   private String getBaseUrlString(HttpServletRequest request) {
     StringBuilder sb = new StringBuilder();
     sb.append(request.getScheme());
@@ -153,6 +151,7 @@ public class FeedProcessorServlet extends HttpServlet {
       throws ServletException, IOException, XMLStreamException {
     XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
     XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(response.getOutputStream());
+    response.setContentType("application/rss+xml; charset=UTF-8");
     XMLEventFactory eventFactory = XMLEventFactory.newInstance();
     XMLEvent end = eventFactory.createDTD("\n");
     StartDocument startDocument = eventFactory.createStartDocument();

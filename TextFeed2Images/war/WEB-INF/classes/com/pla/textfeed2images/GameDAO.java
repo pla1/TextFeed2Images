@@ -74,7 +74,7 @@ public class GameDAO {
         } else {
           week = rs.getInt("week");
           games.add(transfer(rs));
-        }
+        }   
       }
     } catch (Exception e) {
       e.printStackTrace();

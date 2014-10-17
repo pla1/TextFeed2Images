@@ -11,7 +11,7 @@
 		<copy file="index.html" todir="war/" />
 		<copy file="NFL1920x1080.png" todir="war/" />
 		<copy file="WEB-INF/web.xml" todir="war/WEB-INF" />
-		<copy file="WEB-INF/lib/postgresql-9.3-1100.jdbc4.jar" todir="war/WEB-INF/lib" />
+		<copy file="WEB-INF/lib/postgresql-9.3-1102.jdbc4.jar" todir="war/WEB-INF/lib" />
 		<copy todir="war/WEB-INF/classes">
 			<fileset dir="bin" />
 			<fileset dir="src" />
@@ -23,10 +23,8 @@
 	<target name="war" depends="build" description="Create a war file">
 		<zip destfile="TextFeed2Images.war" basedir="war" />
 		<delete
-			dir="/home/htplainf/apache-tomcat-7.0.42/webapps/TextFeed2Images.war"
-			failonerror="false" />
-		<delete dir="/home/htplainf/apache-tomcat-7.0.42/webapps/TextFeed2Images"
-			failonerror="false" />
-		<copy file="TextFeed2Images.war" todir="/home/htplainf/apache-tomcat-7.0.42/webapps" />
+			dir="/home/htplainf/apache-tomcat-8.0.11/webapps/TextFeed2Images.war" failonerror="false" />
+		<delete dir="/home/htplainf/apache-tomcat-8.0.11/webapps/TextFeed2Images" failonerror="false" />
+		<copy file="TextFeed2Images.war" todir="/home/htplainf/apache-tomcat-8.0.11/webapps" />
 	</target>
 </project>	
