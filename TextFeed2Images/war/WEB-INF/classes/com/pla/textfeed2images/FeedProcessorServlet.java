@@ -61,6 +61,7 @@ public class FeedProcessorServlet extends HttpServlet {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing feedUrl parameter");
       return;
     }
+    response.setContentType("application/rss+xml; charset=UTF-8");
     URL url = new URL(feedUrl);
     ArrayList<Item> items = new ArrayList<Item>();
     String baseUrlString = getBaseUrlString(request);
@@ -151,7 +152,6 @@ public class FeedProcessorServlet extends HttpServlet {
       throws ServletException, IOException, XMLStreamException {
     XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
     XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(response.getOutputStream());
-    response.setContentType("application/rss+xml; charset=UTF-8");
     XMLEventFactory eventFactory = XMLEventFactory.newInstance();
     XMLEvent end = eventFactory.createDTD("\n");
     StartDocument startDocument = eventFactory.createStartDocument();
