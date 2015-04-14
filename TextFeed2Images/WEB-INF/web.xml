@@ -30,7 +30,7 @@ PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>FeedProcessorServlet</servlet-name>
-		<url-pattern>/go/</url-pattern>
+		<url-pattern>/go</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ImageServlet</servlet-name>
