@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="/home/htplainf/apache-tomcat-8.0.11/lib/servlet-api.jar"/>
 	<classpathentry kind="lib" path="/home/htplainf/TextFeed2Images/TextFeed2Images/WEB-INF/lib/postgresql-9.3-1102.jdbc4.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/commons-lang3-3.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

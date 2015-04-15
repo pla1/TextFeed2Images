@@ -23,6 +23,8 @@ import javax.xml.stream.events.StartDocument;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 public class FeedProcessorServlet extends HttpServlet {
 
   private static final long serialVersionUID = 41852420946556581L;
@@ -225,6 +227,10 @@ public class FeedProcessorServlet extends HttpServlet {
     if (event instanceof Characters) {
       result = event.asCharacters().getData();
     }
+    result = StringEscapeUtils.unescapeHtml4(result);
+    result = result.replace("<em>", "");
+    result = result.replace("</em>", "");
+    result = result.replace("<br>", " ");
     return result;
   }
 
