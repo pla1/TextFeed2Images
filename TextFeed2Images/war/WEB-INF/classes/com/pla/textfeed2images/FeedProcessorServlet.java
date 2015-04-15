@@ -54,6 +54,15 @@ public class FeedProcessorServlet extends HttpServlet {
 
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     String feedUrl = request.getParameter("q");
+    int transparency = getInt(request.getParameter("transparency"));
+    String backgroundColor = request.getParameter("backgroundColor");
+    String foregroundColor = request.getParameter("foregroundColor");
+    boolean invert = isYes(request.getParameter("invert"));
+    boolean destroy = isYes(request.getParameter("destroy"));
+    if (transparency < 0 || transparency > 255) {
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Parameter transparency must be between 0 and 255");
+      return;
+    }
     if (Util.isBlank(feedUrl)) {
       feedUrl = request.getParameter("feedUrl");
     }
@@ -61,6 +70,8 @@ public class FeedProcessorServlet extends HttpServlet {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing feedUrl parameter");
       return;
     }
+    System.out.println("q: " + feedUrl + " transparency: " + transparency + " backgroundColor: " + backgroundColor
+        + " foregroundColor: " + foregroundColor + " destroy: " + destroy);
     response.setContentType("application/rss+xml; charset=UTF-8");
     URL url = new URL(feedUrl);
     ArrayList<Item> items = new ArrayList<Item>();
@@ -96,7 +107,9 @@ public class FeedProcessorServlet extends HttpServlet {
               StringBuilder imageUrlString = new StringBuilder();
               if (true) {
                 String path = getServletContext().getRealPath(".");
-                if (!"localhost".equals(request.getServerName())) {
+                if ("localhost".equals(request.getServerName())) {
+                  path = "/home/htplainf/apache-tomcat-8.0.11/webapps/TextFeed2Images";
+                } else {
                   path = "/var/lib/tomcat7/webapps/TextFeed2Images";
                 }
                 int hashcode = (title + description + pubdate).hashCode();
@@ -105,10 +118,11 @@ public class FeedProcessorServlet extends HttpServlet {
                 imageUrlString.append("images/");
                 imageUrlString.append(fileName);
                 File file = new File(path + "/images/" + fileName);
-                if (file.exists()) {
+                if (file.exists() && !destroy) {
                   System.out.println("File exists: " + file.getAbsolutePath());
                 } else {
-                  System.out.println(drawText.execute(file, title, description, pubdate));
+                  System.out.println(drawText.execute(file, title, description, pubdate, foregroundColor, backgroundColor, invert,
+                      transparency));
                 }
               } else {
                 imageUrlString.append(getBaseUrlString(request));
@@ -214,4 +228,26 @@ public class FeedProcessorServlet extends HttpServlet {
     return result;
   }
 
+  private int getInt(String s) {
+    int i = 0;
+    try {
+      i = Integer.parseInt(s);
+    } catch (NumberFormatException nfe) {
+
+    }
+    return i;
+  }
+
+  private boolean isYes(String s) {
+    if ("Y".equalsIgnoreCase(s)) {
+      return true;
+    }
+    if ("Yes".equalsIgnoreCase(s)) {
+      return true;
+    }
+    if ("true".equalsIgnoreCase(s)) {
+      return true;
+    }
+    return false;
+  }
 }

@@ -25,7 +25,7 @@ public class DrawText {
             file,
             "U.S. government rarely uses best cybersecurity steps: advisers",
             "NASA astronaut Tom Marshburn and Vickie Kloeris, the agency&#039;s manager of the International Space Station food system, will discuss the space station&#039;s Thanksgiving menus in live satellite interviews from 7- 8:30 a.m. EST Wednesday, Nov. 27.",
-            "November 22, 2013");
+            "November 22, 2013", "ffbbdd", "aaeeee", false, 200);
     System.out.println(fileName);
     Runtime.getRuntime().exec("xdg-open " + fileName);
   }
@@ -33,14 +33,53 @@ public class DrawText {
   public DrawText() {
   }
 
-  public String execute(File file, String title, String description, String dateString) {
+  public Color adjustAlpha(Color color, int factor) {
+    if (factor < 1 || factor > 255) {
+      return color;
+    }
+    return new Color(color.getRed(), color.getGreen(), color.getBlue(), factor);
+  }
+
+  private Color getColor(String hexValue) {
+    if (hexValue == null) {
+      return null;
+    }
+    try {
+      return Color.decode("#" + hexValue);
+    } catch (NumberFormatException nfe) {
+      return null;
+    }
+
+  }
+
+  public String execute(File file, String title, String description, String dateString, String foregroundColorHex,
+      String backgroundColorHex, boolean invert, int transparency) {
     System.out.println("Image file:" + file.getAbsolutePath());
     Rectangle rectangle = new Rectangle(0, 0, WIDTH, HEIGHT);
-    BufferedImage bufferedImage = new BufferedImage(rectangle.width, rectangle.height, BufferedImage.TYPE_INT_RGB);
+    BufferedImage bufferedImage = new BufferedImage(rectangle.width, rectangle.height, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g2d = bufferedImage.createGraphics();
-    g2d.setBackground(Color.WHITE);
+    Color foregroundColor = getColor(foregroundColorHex);
+    Color backgroundColor = getColor(backgroundColorHex);
+    if (backgroundColor == null) {
+      if (invert) {
+        backgroundColor = Color.BLACK;
+      } else {
+        backgroundColor = Color.WHITE;
+      }
+    }
+    if (transparency != 0) {
+      backgroundColor = adjustAlpha(backgroundColor, transparency);
+    }
+    g2d.setColor(backgroundColor);
     g2d.fill(rectangle);
-    g2d.setColor(Color.BLACK);
+    if (foregroundColor == null) {
+      if (invert) {
+        foregroundColor = Color.WHITE;
+      } else {
+        foregroundColor = Color.BLACK;
+      }
+    }
+    g2d.setColor(foregroundColor);
     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     Font titleFont = new Font(FONT_NAME, Font.BOLD, 90);
     Font descriptionFont = new Font(FONT_NAME, Font.PLAIN, 90);
