@@ -15,13 +15,13 @@ Parameters:
 Example URLs:
 
 ```
-http://xbmc-rocks.com/TextFeed2Images/go?q=http://feeds.reuters.com/reuters/topNews
+http://xbmc-rocks.com/go?q=http://feeds.reuters.com/reuters/topNews
 ```
 
 ```
-http://xbmc-rocks.com/TextFeed2Images/go?q=http://feeds.reuters.com/reuters/topNews&invert=yes&destroy=yes
+http://xbmc-rocks.com/go?q=http://feeds.reuters.com/reuters/topNews&invert=yes&destroy=yes
 ```
 
 ```
-http://xbmc-rocks.com/TextFeed2Images/go?q=http://feeds.reuters.com/reuters/topNews&transparency=30&foregroundColor=aabbcc&backgroundColor=bbbbbb&destroy=yes
+http://xbmc-rocks.com/go?q=http://feeds.reuters.com/reuters/topNews&transparency=30&foregroundColor=aabbcc&backgroundColor=bbbbbb&destroy=yes
 ```
