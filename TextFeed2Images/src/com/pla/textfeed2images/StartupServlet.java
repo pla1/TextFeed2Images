@@ -86,7 +86,7 @@ public class StartupServlet extends HttpServlet {
     XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
     String urlBase;
     if (Util.isDevelopmentEnvironment()) {
-      urlBase = "http://192.168.1.203:8080/TextFeed2Images/";
+      urlBase = "http://192.168.1.14:8080/TextFeed2Images/";
     } else {
       urlBase = "http://xbmc-rocks.com/";
     }
@@ -114,6 +114,14 @@ public class StartupServlet extends HttpServlet {
         eventWriter,
         "description",
         "This web app reads a database table, generates images of NFL scores, and creates a new feed that is designed to be consumed by a XBMC home theater PC. Contact the author at Patrick.Archibald@gmail.com.");
+    eventWriter.add(end);
+    eventWriter.add(eventFactory.createStartElement(Constants.BLANK, Constants.BLANK, "item"));
+    createNode(eventWriter, Constants.TITLE, "NFL latest scores");
+    createNode(eventWriter, Constants.DESCRIPTION, "NFL latest scrores");
+    createNode(eventWriter, Constants.LINK, urlBase + "NFLCurrentScoresImageServlet.png");
+    eventWriter.add(end);
+    eventWriter.add(eventFactory.createEndElement(Constants.BLANK, Constants.BLANK, "item"));
+    eventWriter.add(end);
     int year = games.get(0).getYear();
     int week = games.get(0).getWeek();
     ArrayList<Game> weekOfGames = new ArrayList<Game>();

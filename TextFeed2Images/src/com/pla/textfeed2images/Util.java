@@ -43,7 +43,7 @@ public class Util {
     calendar.add(Calendar.DAY_OF_YEAR, -1);
     Date fromDate = calendar.getTime();
     // TODO BUMP BACK DOWN TO 2 AFTER TESTING.
-    calendar.add(Calendar.DAY_OF_YEAR, 5);
+    calendar.add(Calendar.DAY_OF_YEAR, 2);
     Date toDate = calendar.getTime();
     boolean answer = false;
     for (Game game : games) {
@@ -52,7 +52,7 @@ public class Util {
         answer = true;
       }
     }
-    System.out.println("Date range: " + fromDate + " " + toDate + " In progress: " + answer);
+  //  System.out.println("Date range: " + fromDate + " " + toDate + " In progress: " + answer);
     return answer;
   }
 
