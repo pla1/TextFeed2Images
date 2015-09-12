@@ -30,8 +30,70 @@ import javax.xml.stream.events.XMLEvent;
 
 public class StartupServlet extends HttpServlet {
 
+  class StartupThread extends Thread {
+    public StartupThread() {
+      setDaemon(true);
+      System.out.println("StartupThread started");
+    }
+
+    public void run() {
+      System.out.println(this.getClass().getCanonicalName() + " Start. " + new Date());
+      System.out.println("**** START FONTS *****");
+      GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+      try {
+        ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("/usr/share/fonts/truetype/msttcorefonts/Arial.ttf")));
+        ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("/usr/share/fonts/truetype/msttcorefonts/Arial_Bold.ttf")));
+      } catch (Exception e2) {
+        e2.printStackTrace();
+      }
+      String[] fontNames = ge.getAvailableFontFamilyNames();
+      for (int i = 0; i < fontNames.length; i++) {
+        System.out.println(fontNames[i]);
+      }
+      System.out.println("**** END FONTS *****");
+      NFLbackgroundImagePath = servletConfig.getServletContext().getInitParameter("NFL_background_image");
+      System.out.println(NFLbackgroundImagePath);
+      System.out.println("Real path:" + servletConfig.getServletContext().getRealPath("."));
+      Set<String> set = servletConfig.getServletContext().getResourcePaths("/");
+      System.out.println("Set size: " + set.size());
+      for (String s : set) {
+        System.out.println("PATH: " + s);
+      }
+      try {
+        System.out.println("URL: " + servletConfig.getServletContext().getResource(NFLbackgroundImagePath));
+      } catch (MalformedURLException e1) {
+        e1.printStackTrace();
+      }
+      GameDAO gameDAO = new GameDAO();
+      ArrayList<Game> games = gameDAO.getGames();
+      System.out.println(this.getClass().getCanonicalName() + " Writing NFL score images.  " + games.size() + " games. "
+          + new Date());
+      try {
+        writeNewFeed(games);
+        System.out.println(this.getClass().getCanonicalName() + " Done. " + new Date());
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
   private static final long serialVersionUID = -7249315698504496077L;
   private String NFLbackgroundImagePath;
+  private ServletConfig servletConfig;
+
+  private void createNode(XMLEventWriter eventWriter, String name, String value) throws XMLStreamException {
+    XMLEventFactory eventFactory = XMLEventFactory.newInstance();
+    XMLEvent end = eventFactory.createDTD("\n");
+    XMLEvent tab = eventFactory.createDTD("\t");
+    StartElement sElement = eventFactory.createStartElement(Constants.BLANK, Constants.BLANK, name);
+    eventWriter.add(tab);
+    eventWriter.add(sElement);
+    Characters characters = eventFactory.createCharacters(value);
+    eventWriter.add(characters);
+    EndElement eElement = eventFactory.createEndElement(Constants.BLANK, Constants.BLANK, name);
+    eventWriter.add(eElement);
+    eventWriter.add(end);
+  }
 
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     response.setStatus(HttpServletResponse.SC_NO_CONTENT);
@@ -43,43 +105,9 @@ public class StartupServlet extends HttpServlet {
 
   public void init(ServletConfig servletConfig) throws ServletException {
     super.init(servletConfig);
-    System.out.println(this.getClass().getCanonicalName() + " Start. " + new Date());
-    System.out.println("**** START FONTS *****");
-    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    try {
-      ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("/usr/share/fonts/truetype/msttcorefonts/Arial.ttf")));
-      ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("/usr/share/fonts/truetype/msttcorefonts/Arial_Bold.ttf")));
-    } catch (Exception e2) {
-      e2.printStackTrace();
-    }
-    String[] fontNames = ge.getAvailableFontFamilyNames();
-    for (int i = 0; i < fontNames.length; i++) {
-      System.out.println(fontNames[i]);
-    }
-    System.out.println("**** END FONTS *****");
-    NFLbackgroundImagePath = servletConfig.getServletContext().getInitParameter("NFL_background_image");
-    System.out.println(NFLbackgroundImagePath);
-    System.out.println("Real path:" + servletConfig.getServletContext().getRealPath("."));
-    Set<String> set = servletConfig.getServletContext().getResourcePaths("/");
-    System.out.println("Set size: " + set.size());
-    for (String s : set) {
-      System.out.println("PATH: " + s);
-    }
-    try {
-      System.out.println("URL: " + servletConfig.getServletContext().getResource(NFLbackgroundImagePath));
-    } catch (MalformedURLException e1) {
-      e1.printStackTrace();
-    }
-    GameDAO gameDAO = new GameDAO();
-    ArrayList<Game> games = gameDAO.getGames();
-    System.out
-        .println(this.getClass().getCanonicalName() + " Writing NFL score images.  " + games.size() + " games. " + new Date());
-    try {
-      writeNewFeed(games);
-      System.out.println(this.getClass().getCanonicalName() + " Done. " + new Date());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    this.servletConfig = servletConfig;
+    StartupThread startupThread = new StartupThread();
+    startupThread.start();
   }
 
   private void writeNewFeed(ArrayList<Game> games) throws ServletException, IOException, XMLStreamException {
@@ -162,20 +190,6 @@ public class StartupServlet extends HttpServlet {
     eventWriter.add(end);
     eventWriter.add(eventFactory.createEndDocument());
     eventWriter.close();
-  }
-
-  private void createNode(XMLEventWriter eventWriter, String name, String value) throws XMLStreamException {
-    XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-    XMLEvent end = eventFactory.createDTD("\n");
-    XMLEvent tab = eventFactory.createDTD("\t");
-    StartElement sElement = eventFactory.createStartElement(Constants.BLANK, Constants.BLANK, name);
-    eventWriter.add(tab);
-    eventWriter.add(sElement);
-    Characters characters = eventFactory.createCharacters(value);
-    eventWriter.add(characters);
-    EndElement eElement = eventFactory.createEndElement(Constants.BLANK, Constants.BLANK, name);
-    eventWriter.add(eElement);
-    eventWriter.add(end);
   }
 
 }
