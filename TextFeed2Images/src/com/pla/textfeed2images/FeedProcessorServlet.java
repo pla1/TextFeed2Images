@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -22,8 +21,6 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartDocument;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-
-import org.apache.commons.lang3.StringEscapeUtils;
 
 public class FeedProcessorServlet extends HttpServlet {
 
@@ -78,74 +75,12 @@ public class FeedProcessorServlet extends HttpServlet {
     URL url = new URL(feedUrl);
     ArrayList<Item> items = new ArrayList<Item>();
     String baseUrlString = getBaseUrlString(request);
-    DrawText drawText = new DrawText();
     String channelTitle = null;
     try {
-      String description = "";
-      String title = "";
-      String pubdate = "";
       XMLInputFactory inputFactory = XMLInputFactory.newInstance();
       InputStream in = url.openStream();
       XMLEventReader eventReader = inputFactory.createXMLEventReader(in);
-      while (eventReader.hasNext()) {
-        XMLEvent event = eventReader.nextEvent();
-        if (event.isStartElement()) {
-          String localPart = event.asStartElement().getName().getLocalPart();
-          if (localPart.equals(TITLE)) {
-            title = getCharacterData(event, eventReader);
-            if (channelTitle == null) {
-              channelTitle = title;
-            }
-          }
-          if (localPart.equals(DESCRIPTION)) {
-            description = getCharacterData(event, eventReader);
-          }
-          if (localPart.equals(PUB_DATE)) {
-            pubdate = getCharacterData(event, eventReader);
-          }
-        } else {
-          if (event.isEndElement()) {
-            if (event.asEndElement().getName().getLocalPart() == (ITEM)) {
-              StringBuilder imageUrlString = new StringBuilder();
-              if (true) {
-                String path = getServletContext().getRealPath(".");
-                if ("localhost".equals(request.getServerName())) {
-                  path = "/home/htplainf/apache-tomcat-8.0.11/webapps/TextFeed2Images";
-                } else {
-                  path = "/var/lib/tomcat7/webapps/TextFeed2Images";
-                }
-                int hashcode = (title + description + pubdate).hashCode();
-                String fileName = hashcode + ".png";
-                imageUrlString.append(baseUrlString);
-                imageUrlString.append("images/");
-                imageUrlString.append(fileName);
-                File file = new File(path + "/images/" + fileName);
-                if (file.exists() && !destroy) {
-                  System.out.println("File exists: " + file.getAbsolutePath());
-                } else {
-                  System.out.println(drawText.execute(file, title, description, pubdate, foregroundColor, backgroundColor, invert,
-                      transparency));
-                }
-              } else {
-                imageUrlString.append(getBaseUrlString(request));
-                imageUrlString.append("/ImageServlet?title=");
-                imageUrlString.append(URLEncoder.encode(title, "UTF-8"));
-                imageUrlString.append("&description=");
-                imageUrlString.append(URLEncoder.encode(description, "UTF-8"));
-                imageUrlString.append("&dateString=");
-                imageUrlString.append(URLEncoder.encode(pubdate, "UTF-8"));
-              }
-              Item item = new Item();
-              item.setTitle(title);
-              item.setDescription(description);
-              item.setDateDisplay(pubdate);
-              item.setLink(imageUrlString.toString());
-              items.add(item);
-              event = eventReader.nextEvent();
-            }
-          }
-        }
-      }
+      items.addAll(getItems(eventReader, baseUrlString, destroy, foregroundColor, backgroundColor, invert, transparency));
     } catch (XMLStreamException e) {
       throw new RuntimeException(e);
     }
@@ -154,6 +89,64 @@ public class FeedProcessorServlet extends HttpServlet {
     } catch (XMLStreamException e) {
       e.printStackTrace();
     }
+  }
+
+  private ArrayList<Item> getItems(XMLEventReader eventReader, String baseUrlString, boolean destroy, String foregroundColor,
+      String backgroundColor, boolean invert, int transparency) throws XMLStreamException {
+    ArrayList<Item> items = new ArrayList<Item>();
+    StringBuilder sb = new StringBuilder();
+    Item item = new Item();
+    while (eventReader.hasNext()) {
+      XMLEvent event = eventReader.nextEvent();
+      if (event.isEndElement()) {
+        EndElement element = (EndElement) event;
+        String elementName = element.getName().getLocalPart();
+        System.out.println("End element:" + elementName);
+        if (TITLE.equals(elementName)) {
+          item.setTitle(clean(sb.toString()));
+        }
+        if (DESCRIPTION.equals(elementName)) {
+          item.setDescription(clean(sb.toString()));
+        }
+        if (PUB_DATE.equals(elementName)) {
+          item.setDateDisplay(sb.toString());
+        }
+        if (ITEM.equals(elementName)) {
+          StringBuilder imageUrlString = new StringBuilder();
+          if (true) {
+            String path = getServletContext().getRealPath(".");
+            if (Util.isDevelopmentEnvironment()) {
+              path = "/home/htplainf/apache-tomcat-8.0.11/webapps/TextFeed2Images";
+            } else {
+              path = "/usr/share/apache-tomcat-8.0.30/webapps/TextFeed2Images";
+            }
+            int hashcode = item.toString().hashCode();
+            String fileName = hashcode + ".png";
+            imageUrlString.append(baseUrlString);
+            imageUrlString.append("images/");
+            imageUrlString.append(fileName);
+            File file = new File(path + "/images/" + fileName);
+            if (file.exists() && !destroy) {
+              System.out.println("File exists: " + file.getAbsolutePath());
+            } else {
+              DrawText drawText = new DrawText();
+              System.out.println(drawText.execute(file, item.getTitle(), item.getDescription(), item.getDateDisplay(),
+                  foregroundColor, backgroundColor, invert, transparency));
+            }
+          }
+          item.setLink(imageUrlString.toString());
+          items.add(item);
+          item = new Item();
+        }
+        sb = new StringBuilder();
+      }
+      if (event.isCharacters()) {
+        Characters characters = (Characters) event;
+        sb.append(characters.getData());
+        sb.append(" ");
+      }
+    }
+    return items;
   }
 
   private String getUrlString(HttpServletRequest request) {
@@ -221,19 +214,6 @@ public class FeedProcessorServlet extends HttpServlet {
     eventWriter.add(end);
   }
 
-  private String getCharacterData(XMLEvent event, XMLEventReader eventReader) throws XMLStreamException {
-    String result = "";
-    event = eventReader.nextEvent();
-    if (event instanceof Characters) {
-      result = event.asCharacters().getData();
-    }
-    result = StringEscapeUtils.unescapeHtml4(result);
-    result = result.replace("<em>", "");
-    result = result.replace("</em>", "");
-    result = result.replace("<br>", " ");
-    return result;
-  }
-
   private int getInt(String s) {
     int i = 0;
     try {
@@ -255,5 +235,13 @@ public class FeedProcessorServlet extends HttpServlet {
       return true;
     }
     return false;
+  }
+
+  private String clean(String s) {
+    s = s.replace("&apos;", "'");
+    s = s.replaceAll("&gt;", ">");
+    s = s.replaceAll("&lt;", "<");
+    s = s.replaceAll("\\<[^>]*>", "").trim();
+    return s.replaceAll("\\s+", " ");
   }
 }

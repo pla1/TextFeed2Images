@@ -19,6 +19,7 @@ public class NFLCurrentScoresImageServlet extends HttpServlet {
 
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     response.setContentType("image/png");
+    response.setHeader("Refresh", "60");
     GameDAO gameDAO = new GameDAO();
     ArrayList<Game> games = gameDAO.getGamesThisWeek();
     System.out.println("NFL Background: " + NFLbackgroundImagePath + " " + games.size() + " games. Date: " + new Date() + " "

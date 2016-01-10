@@ -2,7 +2,7 @@ package com.pla.textfeed2images;
 
 import java.util.Date;
 
-public class Game {
+public class Game implements Comparable<Game> {
   private String homeTeam;
   private int homePoints;
   private String eventId;
@@ -204,6 +204,32 @@ public class Game {
 
   public void setFinished(boolean finished) {
     this.finished = finished;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (homeTeam == null) {
+      return false;
+    }
+    Game game = (Game) obj;
+    if (game.getHomeTeam() == null) {
+      return false;
+    }
+    return super.equals(obj);
+  }
+
+  @Override
+  public int compareTo(Game game) {
+    if (homeTeam == null) {
+      return -1;
+    }
+    if (game.getHomeTeam() == null) {
+      return 1;
+    }
+    return homeTeam.compareTo(game.getHomeTeam());
   }
 
 }

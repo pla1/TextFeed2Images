@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class GameDAO {
   private static final SimpleDateFormat hhmm = new SimpleDateFormat("h:mm");
@@ -62,8 +63,15 @@ public class GameDAO {
     try {
       connection = Util.getConnection();
       ps = connection
-          .prepareStatement("select a.*, date(a.start_time) as gamedate,  b.name as home_team_name, c.name as away_team_name, start_time > current_timestamp as pending from game as a "
-              + "join team as b on a.home_team = b.team_id join team as c on a.away_team = c.team_id where date(start_time) <= current_date "
+          .prepareStatement("select a.*, date(a.start_time) as gamedate,  "
+              + "b.name as home_team_name, c.name as away_team_name, "
+              + "start_time > current_timestamp as pending "
+              + "from game as a "
+              + "join team as b "
+              + "on a.home_team = b.team_id "
+              + "join team as c "
+              + "on a.away_team = c.team_id "
+              + "where date(start_time) <= current_date "
               + "order by start_time desc");
       rs = ps.executeQuery();
       boolean done = false;
@@ -81,6 +89,7 @@ public class GameDAO {
     } finally {
       Util.close(rs, ps, connection);
     }
+    Collections.sort(games);
     return games;
   }
 

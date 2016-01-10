@@ -6,6 +6,14 @@ public class Item {
   private String title;
   private String dateDisplay;
 
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(title).append(" ");
+    sb.append(description).append(" ");
+    sb.append(dateDisplay);
+    return sb.toString();
+  }
+
   public Item() {
   }
 

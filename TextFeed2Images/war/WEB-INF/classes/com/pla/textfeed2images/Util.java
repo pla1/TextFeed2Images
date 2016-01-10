@@ -129,7 +129,7 @@ public class Util {
 
   public static Connection getConnection() throws ClassNotFoundException, SQLException {
     Class.forName("org.postgresql.Driver");
-    return DriverManager.getConnection("jdbc:postgresql://localhost:5432/nfldb", "nfldb", "nfldb");
+    return DriverManager.getConnection("jdbc:postgresql://localhost:5432/nfldb", "nfldb", "aezeiQu2eingeesh5Aechaechu0ariKai2jah1ai");
   }
 
   public static void close(ResultSet rs, PreparedStatement ps, Connection connection) {

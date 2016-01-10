@@ -95,7 +95,7 @@ public class NFLTeamImage {
     if (Util.isDevelopmentEnvironment()) {
       outputFile = new File("/home/htplainf/apache-tomcat-7.0.42/webapps/TextFeed2Images/NFLstandings.rss");
     } else {
-      outputFile = new File("/var/lib/tomcat7/webapps/TextFeed2Images/NFLstandings.rss");
+      outputFile = new File("/usr/share/apache-tomcat-8.0.30/webapps/TextFeed2Images/NFLstandings.rss");
     }
     FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
     XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
@@ -131,7 +131,7 @@ public class NFLTeamImage {
         if (Util.isDevelopmentEnvironment()) {
           urlString = "http://localhost:8080/TextFeed2Images/images/" + year + team.getTeamId() + ".png";
         } else {
-          urlString = "http://xbmc-rocks.com/images/" + year + team.getTeamId() + ".png";
+          urlString = "http://xbmc-rocks.com/TextFeed2Images/images/" + year + team.getTeamId() + ".png";
         }
         createNode(eventWriter, Constants.LINK, urlString);
         eventWriter.add(end);
@@ -162,8 +162,8 @@ public class NFLTeamImage {
           backgroundFile = new File("/home/htplainf/apache-tomcat-7.0.42/webapps/TextFeed2Images/WEB-INF/resources/"
               + team.getTeamId() + ".jpg");
         } else {
-          outputFile = new File("/var/lib/tomcat7/webapps/TextFeed2Images/images/" + year + team.getTeamId() + ".png");
-          backgroundFile = new File("/var/lib/tomcat7/webapps/TextFeed2Images/WEB-INF/resources/" + team.getTeamId() + ".jpg");
+          outputFile = new File("/usr/share/apache-tomcat-8.0.30/webapps/TextFeed2Images/images/" + year + team.getTeamId() + ".png");
+          backgroundFile = new File("/usr/share/apache-tomcat-8.0.30/webapps/TextFeed2Images/WEB-INF/resources/" + team.getTeamId() + ".jpg");
         }
         InputStream is = new FileInputStream(backgroundFile);
         NFLTeamImage nflTeamImage = new NFLTeamImage(team.getTeamId(), games, is);
