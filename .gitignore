@@ -6,3 +6,4 @@
 *.ear
 war
 TextFeed2Images/war
+war/*

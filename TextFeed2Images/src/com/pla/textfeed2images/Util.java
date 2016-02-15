@@ -1,7 +1,10 @@
 package com.pla.textfeed2images;
 
 import java.awt.GraphicsEnvironment;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.sql.Connection;
@@ -13,13 +16,29 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Properties;
 
 public class Util {
+  private static Properties properties;
   public static void main(String[] args) throws Exception {
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     String[] fontNames = ge.getAvailableFontFamilyNames();
     for (int i = 0; i < fontNames.length; i++) {
       System.out.println(fontNames[i]);
+    }
+  }
+
+  static {
+    String fileName = "/etc/com.pla.properties";
+    System.out.println("Loading properties from file: " + fileName);
+    try {
+      InputStream input = new FileInputStream(new File(fileName));
+      properties = new Properties();
+      properties.load(input);
+      System.out.println("Properties loaded from file: " + fileName);
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.out.println("Properties not loaded from file: " + fileName + " " + e.getLocalizedMessage());
     }
   }
 
@@ -52,7 +71,8 @@ public class Util {
         answer = true;
       }
     }
-  //  System.out.println("Date range: " + fromDate + " " + toDate + " In progress: " + answer);
+    // System.out.println("Date range: " + fromDate + " " + toDate +
+    // " In progress: " + answer);
     return answer;
   }
 
@@ -129,7 +149,7 @@ public class Util {
 
   public static Connection getConnection() throws ClassNotFoundException, SQLException {
     Class.forName("org.postgresql.Driver");
-    return DriverManager.getConnection("jdbc:postgresql://localhost:5432/nfldb", "nfldb", "aezeiQu2eingeesh5Aechaechu0ariKai2jah1ai");
+    return DriverManager.getConnection("jdbc:postgresql://localhost:5432/nfldb", "nfldb", properties.getProperty("nfldb.password"));
   }
 
   public static void close(ResultSet rs, PreparedStatement ps, Connection connection) {
