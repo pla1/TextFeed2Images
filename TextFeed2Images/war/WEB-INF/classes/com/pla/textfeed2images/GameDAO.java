@@ -63,26 +63,16 @@ public class GameDAO {
     try {
       connection = Util.getConnection();
       ps = connection
-          .prepareStatement("select a.*, date(a.start_time) as gamedate,  "
-              + "b.name as home_team_name, c.name as away_team_name, "
-              + "start_time > current_timestamp as pending "
-              + "from game as a "
-              + "join team as b "
-              + "on a.home_team = b.team_id "
-              + "join team as c "
-              + "on a.away_team = c.team_id "
+          .prepareStatement("select season_year, week, season_type "
+              + "from game "
               + "where date(start_time) <= current_date "
               + "order by start_time desc");
       rs = ps.executeQuery();
-      boolean done = false;
-      int week = 0;
-      while (rs.next() && !done) {
-        if (week != 0 && week != rs.getInt("week")) {
-          done = true;
-        } else {
-          week = rs.getInt("week");
-          games.add(transfer(rs));
-        }   
+      if (rs.next()) {
+        int year = rs.getInt("season_year");
+        int week = rs.getInt("week");
+        String type = rs.getString("season_type");
+        return getGames(year, week, type);
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -125,8 +115,15 @@ public class GameDAO {
     try {
       connection = Util.getConnection();
       ps = connection
-          .prepareStatement("select a.*, date(a.start_time) as gamedate,  b.name as home_team_name, c.name as away_team_name, start_time > current_timestamp as pending from game as a "
-              + "join team as b on a.home_team = b.team_id join team as c on a.away_team = c.team_id where week = ? "
+          .prepareStatement("select a.*, date(a.start_time) as gamedate,  "
+              + "b.name as home_team_name, c.name as away_team_name, "
+              + "start_time > current_timestamp as pending "
+              + "from game as a "
+              + "join team as b "
+              + "on a.home_team = b.team_id "
+              + "join team as c "
+              + "on a.away_team = c.team_id "
+              + "where week = ? "
               + "order by season_type, start_time desc");
       ps.setInt(1, week);
       rs = ps.executeQuery();
@@ -144,6 +141,47 @@ public class GameDAO {
             games.add(transfer(rs));
           }
         }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      Util.close(rs, ps, connection);
+    }
+    return games;
+  }
+
+  public ArrayList<Game> getGames(int year, int week, String type) {
+    ArrayList<Game> games = new ArrayList<Game>();
+    Connection connection = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    try {
+      connection = Util.getConnection();
+      String sqlStatement = "select b.name as home_team_name, "
+          + "c.name as away_team_name, "
+          + "a.home_score, a.away_score, a.start_time, a.day_of_week, a.week, "
+          + "a.season_year, a.season_type, a.finished, "
+          + "date(a.start_time) as gamedate,  "
+          + "b.name as home_team_name, c.name as away_team_name, "
+          + "start_time > current_timestamp as pending "
+          + "from game as a "
+          + "join team as b "
+          + "on a.home_team = b.team_id "
+          + "join team as c "
+          + "on a.away_team = c.team_id "
+          + "where a.season_year = ? "
+          + "and a.week = ? "
+          + "and a.season_type::text = ? "
+          + "order by start_time desc";
+      System.out.println(sqlStatement);
+      ps = connection.prepareStatement(sqlStatement);
+      int i = 1;
+      ps.setInt(i++, year);
+      ps.setInt(i++, week);
+      ps.setString(i++, type);
+      rs = ps.executeQuery();
+      while (rs.next()) {
+        games.add(transfer(rs));
       }
     } catch (Exception e) {
       e.printStackTrace();
