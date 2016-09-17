@@ -20,6 +20,8 @@ public class Game implements Comparable<Game> {
   private int awayPoints;
   private Date date;
   private boolean finished = false;
+  private long startTimeMilliseconds; 
+  private String startTimeDisplay;
 
   public Game() {
   }
@@ -230,6 +232,22 @@ public class Game implements Comparable<Game> {
       return 1;
     }
     return homeTeam.compareTo(game.getHomeTeam());
+  }
+
+  public long getStartTimeMilliseconds() {
+    return startTimeMilliseconds;
+  }
+
+  public void setStartTimeMilliseconds(long startTimeMilliseconds) {
+    this.startTimeMilliseconds = startTimeMilliseconds;
+  }
+
+  public String getStartTimeDisplay() {
+    return startTimeDisplay;
+  }
+
+  public void setStartTimeDisplay(String startTimeDisplay) {
+    this.startTimeDisplay = startTimeDisplay;
   }
 
 }

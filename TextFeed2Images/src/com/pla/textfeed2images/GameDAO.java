@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,6 +53,9 @@ public class GameDAO {
     game.setType(rs.getString("season_type"));
     game.setDate(rs.getDate("gamedate"));
     game.setFinished(rs.getBoolean("finished"));
+    Timestamp timestamp = rs.getTimestamp("start_time");
+    game.setStartTimeMilliseconds(Util.transfer(timestamp));
+    game.setStartTimeDisplay(Util.getDateDisplay(timestamp));
     return game;
   }
 

@@ -11,6 +11,7 @@
 		<copy file="index.html" todir="war/" />
 		<copy file="NFL1920x1080.png" todir="war/" />
 		<copy file="WEB-INF/web.xml" todir="war/WEB-INF" />
+		<copy file="WEB-INF/lib/gson-2.7.jar" todir="war/WEB-INF/lib" />
 		<copy file="WEB-INF/lib/postgresql-9.3-1102.jdbc4.jar" todir="war/WEB-INF/lib" />
 		<copy file="WEB-INF/lib/commons-lang3-3.4.jar" todir="war/WEB-INF/lib" />
 		<copy todir="war/WEB-INF/classes">

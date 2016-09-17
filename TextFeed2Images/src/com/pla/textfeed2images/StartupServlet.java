@@ -160,6 +160,9 @@ public class StartupServlet extends HttpServlet {
         InputStream nflBackgroundImageInputStream = getServletContext().getResourceAsStream(NFLbackgroundImagePath);
         NFLWeekImage nflWeekImage = new NFLWeekImage(weekOfGames, nflBackgroundImageInputStream);
         BufferedImage bufferedImage = nflWeekImage.getBufferedImage();
+        if (!path.endsWith("/")) {
+          path = path + "/";
+        }
         String imageFileName = path + "images/" + weekOfGames.get(0).getImageFileName();
         File imageFile = new File(imageFileName);
         System.out.println("About to write: " + imageFile.getAbsolutePath());

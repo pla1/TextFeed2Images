@@ -12,6 +12,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -20,6 +22,7 @@ import java.util.Properties;
 
 public class Util {
   private static Properties properties;
+
   public static void main(String[] args) throws Exception {
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     String[] fontNames = ge.getAvailableFontFamilyNames();
@@ -42,11 +45,30 @@ public class Util {
     }
   }
 
+  public static boolean isNotBlank(String s) {
+    return !isBlank(s);
+  }
+
   public static boolean isBlank(String s) {
-    if (s == null || s.trim().length() == 0) {
-      return true;
+    return (s == null || s.trim().length() == 0);
+  }
+
+  public static long transfer(Timestamp timestamp) {
+    if (timestamp == null) {
+      return 0;
+    } else {
+      return timestamp.getTime();
     }
-    return false;
+  }
+
+  public static String getDateDisplay(Timestamp timestamp) {
+    if (timestamp == null) {
+      return "";
+    } else {
+      // TODO finish format
+      SimpleDateFormat sdf = new SimpleDateFormat("EEE ");
+      return sdf.format(timestamp);
+    }
   }
 
   public static void runCommand(String s) {
