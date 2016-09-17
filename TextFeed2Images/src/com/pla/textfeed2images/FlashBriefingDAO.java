@@ -1,10 +1,8 @@
 package com.pla.textfeed2images;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 
 public class FlashBriefingDAO {
 
@@ -20,11 +18,10 @@ public class FlashBriefingDAO {
 
   private ArrayList<String> getFinals(ArrayList<Game> games) {
     ArrayList<String> arrayList = new ArrayList<String>();
-    SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
     String dayOfWeekHold = "";
     for (Game game : games) {
       if (game.isFinished()) {
-        String dayOfWeek = sdf.format(game.getDate());
+        String dayOfWeek = game.getDayOfWeek();
         if (!dayOfWeek.equals(dayOfWeekHold)) {
           arrayList.add(String.format("On %s ", dayOfWeek));
         }
@@ -62,12 +59,11 @@ public class FlashBriefingDAO {
         return o1.getHomeTeam().compareTo(o2.getHomeTeam());
       }
     });
-    SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
     String dayOfWeek = null;
     for (Game game : games) {
       if (!game.isFinished()) {
-        if (dayOfWeek == null || !dayOfWeek.equals(sdf.format(game.getDate()))) {
-          dayOfWeek = sdf.format(game.getDate());
+        if (dayOfWeek == null || !dayOfWeek.equals(game.getDayOfWeek())) {
+          dayOfWeek = game.getDayOfWeek();
           arrayList.add(String.format("Coming up on %s, ", dayOfWeek));
         }
         arrayList.add(String.format("%s at %s.", game.getAwayTeam(), game.getHomeTeam()));
