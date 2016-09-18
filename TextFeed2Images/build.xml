@@ -24,8 +24,7 @@
 	</target>
 	<target name="war" depends="build" description="Create a war file">
 		<zip destfile="TextFeed2Images.war" basedir="war" />
-		<delete dir="/home/htplainf/apache-tomcat-8.0.11/webapps/TextFeed2Images.war" failonerror="false" />
-		<delete dir="/home/htplainf/apache-tomcat-8.0.11/webapps/TextFeed2Images" failonerror="false" />
-		<copy file="TextFeed2Images.war" todir="/home/htplainf/apache-tomcat-8.0.11/webapps" />
+		<delete dir="/mnt/ssd2/apache-tomcat-8.0.37/webapps/TextFeed2Images.war" failonerror="false" />
+		<copy file="TextFeed2Images.war" todir="/mnt/ssd2/apache-tomcat-8.0.37/webapps" />
 	</target>
 </project>
