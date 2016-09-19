@@ -43,6 +43,51 @@ public class FlashBriefingDAO {
     return arrayList;
   }
 
+  private ArrayList<String> getPassingLeaders() {
+    ArrayList<String> arrayList = new ArrayList<String>();
+    PlayerDAO playerDAO = new PlayerDAO();
+    ArrayList<Player> players = playerDAO.getPassing();
+    for (int i = 0; i < 5 && i < players.size(); i++) {
+      Player player = players.get(i);
+      arrayList.add(String.format("Number %d with %d yards %s of the %s.", i + 1, player.getAggregate(), player.getFullName(),
+          player.getTeam()));
+    }
+    if (!arrayList.isEmpty()) {
+      arrayList.add(0, "Here are the quarterbacks with the most passing yards.");
+    }
+    return arrayList;
+  }
+
+  private ArrayList<String> getRushingLeaders() {
+    ArrayList<String> arrayList = new ArrayList<String>();
+    PlayerDAO playerDAO = new PlayerDAO();
+    ArrayList<Player> players = playerDAO.getRushing();
+    for (int i = 0; i < 5 && i < players.size(); i++) {
+      Player player = players.get(i);
+      arrayList.add(String.format("Number %d with %d yards %s of the %s.", i + 1, player.getAggregate(), player.getFullName(),
+          player.getTeam()));
+    }
+    if (!arrayList.isEmpty()) {
+      arrayList.add(0, "Here are the players with the most rushing yards.");
+    }
+    return arrayList;
+  }
+
+  private ArrayList<String> getReceivingLeaders() {
+    ArrayList<String> arrayList = new ArrayList<String>();
+    PlayerDAO playerDAO = new PlayerDAO();
+    ArrayList<Player> players = playerDAO.getReceiving();
+    for (int i = 0; i < 5 && i < players.size(); i++) {
+      Player player = players.get(i);
+      arrayList.add(String.format("Number %d with %d yards %s of the %s.", i + 1, player.getAggregate(), player.getFullName(),
+          player.getTeam()));
+    }
+    if (!arrayList.isEmpty()) {
+      arrayList.add(0, "Here are the players with the most receiving yards.");
+    }
+    return arrayList;
+  }
+
   private ArrayList<String> getUpcoming(ArrayList<Game> games) {
     ArrayList<String> arrayList = new ArrayList<String>();
     if (games.isEmpty()) {
@@ -194,6 +239,9 @@ public class FlashBriefingDAO {
     }
     phrases.addAll(getFinals(games));
     phrases.addAll(getUpcoming(games));
+    phrases.addAll(getPassingLeaders());
+    phrases.addAll(getReceivingLeaders());
+    phrases.addAll(getRushingLeaders());
     phrases.add("That's all for your flash briefing.");
     return phrases.toArray(new String[0]);
   }
