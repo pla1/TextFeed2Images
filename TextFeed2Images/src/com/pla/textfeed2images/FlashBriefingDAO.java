@@ -43,6 +43,81 @@ public class FlashBriefingDAO {
 		return arrayList;
 	}
 
+<<<<<<< HEAD
+  private ArrayList<String> getPassingLeaders() {
+    ArrayList<String> arrayList = new ArrayList<String>();
+    PlayerDAO playerDAO = new PlayerDAO();
+    ArrayList<Player> players = playerDAO.getPassing();
+    for (int i = 0; i < 5 && i < players.size(); i++) {
+      Player player = players.get(i);
+      arrayList.add(String.format("Number %d with %d yards %s of the %s.", i + 1, player.getAggregate(), player.getFullName(),
+          player.getTeam()));
+    }
+    if (!arrayList.isEmpty()) {
+      arrayList.add(0, "Here are the quarterbacks with the most passing yards.");
+    }
+    return arrayList;
+  }
+
+  private ArrayList<String> getRushingLeaders() {
+    ArrayList<String> arrayList = new ArrayList<String>();
+    PlayerDAO playerDAO = new PlayerDAO();
+    ArrayList<Player> players = playerDAO.getRushing();
+    for (int i = 0; i < 5 && i < players.size(); i++) {
+      Player player = players.get(i);
+      arrayList.add(String.format("Number %d with %d yards %s of the %s.", i + 1, player.getAggregate(), player.getFullName(),
+          player.getTeam()));
+    }
+    if (!arrayList.isEmpty()) {
+      arrayList.add(0, "Here are the players with the most rushing yards.");
+    }
+    return arrayList;
+  }
+
+  private ArrayList<String> getReceivingLeaders() {
+    ArrayList<String> arrayList = new ArrayList<String>();
+    PlayerDAO playerDAO = new PlayerDAO();
+    ArrayList<Player> players = playerDAO.getReceiving();
+    for (int i = 0; i < 5 && i < players.size(); i++) {
+      Player player = players.get(i);
+      arrayList.add(String.format("Number %d with %d yards %s of the %s.", i + 1, player.getAggregate(), player.getFullName(),
+          player.getTeam()));
+    }
+    if (!arrayList.isEmpty()) {
+      arrayList.add(0, "Here are the players with the most receiving yards.");
+    }
+    return arrayList;
+  }
+
+  private ArrayList<String> getUpcoming(ArrayList<Game> games) {
+    ArrayList<String> arrayList = new ArrayList<String>();
+    if (games.isEmpty()) {
+      return arrayList;
+    }
+    Collections.sort(games, new Comparator<Game>() {
+      public int compare(Game o1, Game o2) {
+        if (o1.getDate().after(o2.getDate())) {
+          return 1;
+        }
+        if (o2.getDate().after(o1.getDate())) {
+          return -1;
+        }
+        return o1.getHomeTeam().compareTo(o2.getHomeTeam());
+      }
+    });
+    String dayOfWeek = null;
+    for (Game game : games) {
+      if (!game.isFinished()) {
+        if (dayOfWeek == null || !dayOfWeek.equals(game.getDayOfWeek())) {
+          dayOfWeek = game.getDayOfWeek();
+          arrayList.add(String.format("Coming up on %s, ", dayOfWeek));
+        }
+        arrayList.add(String.format("%s at %s.", game.getAwayTeam(), game.getHomeTeam()));
+      }
+    }
+    return arrayList;
+  }
+=======
 	private ArrayList<String> getUpcoming(ArrayList<Game> games) {
 		ArrayList<String> arrayList = new ArrayList<String>();
 		if (games.isEmpty()) {
@@ -71,6 +146,7 @@ public class FlashBriefingDAO {
 		}
 		return arrayList;
 	}
+>>>>>>> ebdcf24e0e5c4ae10d5ce4f05b6fdccdb466a05a
 
 	private ArrayList<String> getInProgress(ArrayList<Game> games) {
 		ArrayList<String> arrayList = new ArrayList<String>();
@@ -176,6 +252,32 @@ public class FlashBriefingDAO {
 		}
 	}
 
+<<<<<<< HEAD
+  public String[] getNflCurrentWeek() {
+    ArrayList<String> phrases = new ArrayList<String>();
+    GameDAO gameDAO = new GameDAO();
+    ArrayList<Game> games = gameDAO.getGamesThisWeek();
+    if (games.isEmpty()) {
+      return phrases.toArray(new String[0]);
+    }
+    int week = games.get(0).getWeek();
+    phrases.add(String.format("Here is your flash briefing for NFL week number %d.", week));
+    // phrases.add(getWinners(games));
+    // phrases.add(getLoosers(games));
+    phrases.addAll(getInProgress(games));
+    String ties = getTies(games);
+    if (Util.isNotBlank(ties)) {
+      phrases.add(ties);
+    }
+    phrases.addAll(getFinals(games));
+    phrases.addAll(getUpcoming(games));
+    phrases.addAll(getPassingLeaders());
+    phrases.addAll(getReceivingLeaders());
+    phrases.addAll(getRushingLeaders());
+    phrases.add("That's all for your flash briefing.");
+    return phrases.toArray(new String[0]);
+  }
+=======
 	public String[] getNflCurrentWeek() {
 		ArrayList<String> phrases = new ArrayList<String>();
 		GameDAO gameDAO = new GameDAO();
@@ -202,4 +304,5 @@ public class FlashBriefingDAO {
 		phrases.add("That's all for your flash briefing.");
 		return phrases.toArray(new String[0]);
 	}
+>>>>>>> ebdcf24e0e5c4ae10d5ce4f05b6fdccdb466a05a
 }
