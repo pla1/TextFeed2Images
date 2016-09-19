@@ -194,6 +194,7 @@ public class FlashBriefingDAO {
 			phrases.add(ties);
 		}
 		if (!inProgress.isEmpty() || !ties.isEmpty()) {
+			phrases.add("That's all for your flash briefing.");
 			return phrases.toArray(new String[0]);
 		}
 		phrases.addAll(getFinals(games));
