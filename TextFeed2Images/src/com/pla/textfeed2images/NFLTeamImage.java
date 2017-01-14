@@ -90,7 +90,7 @@ public class NFLTeamImage {
     eventWriter.add(end);
   }
 
-  private void createFeeds(int[] years, ArrayList<Team> teams) throws Exception {
+	private void createFeeds(int[] years, ArrayList<Team> teams) throws Exception {
     File outputFile;
     if (Util.isDevelopmentEnvironment()) {
       outputFile = new File("/home/htplainf/apache-tomcat-7.0.42/webapps/TextFeed2Images/NFLstandings.rss");
