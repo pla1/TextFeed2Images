@@ -29,6 +29,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 public class StartupServlet extends HttpServlet {
+	private final String TAG = this.getClass().getCanonicalName();
 
 	class StartupThread extends Thread {
 		public StartupThread() {
@@ -37,8 +38,8 @@ public class StartupServlet extends HttpServlet {
 		}
 
 		public void run() {
-			System.out.println(this.getClass().getCanonicalName() + " Start. " + new Date());
-			System.out.println("**** START FONTS *****");
+			System.out.format("%s Start. %s\n", TAG, new Date());
+			System.out.format("%s **** START FONTS *****\n", TAG);
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			try {
 				ge.registerFont(Font.createFont(Font.TRUETYPE_FONT,
@@ -52,27 +53,27 @@ public class StartupServlet extends HttpServlet {
 			for (int i = 0; i < fontNames.length; i++) {
 				System.out.println(fontNames[i]);
 			}
-			System.out.println("**** END FONTS *****");
+			System.out.format("%s **** END FONTS *****\n", TAG);
 			NFLbackgroundImagePath = servletConfig.getServletContext().getInitParameter("NFL_background_image");
 			System.out.println(NFLbackgroundImagePath);
-			System.out.println("Real path:" + servletConfig.getServletContext().getRealPath("."));
+			System.out.format("%s Real path: %s\n", TAG, servletConfig.getServletContext().getRealPath("."));
 			Set<String> set = servletConfig.getServletContext().getResourcePaths("/");
-			System.out.println("Set size: " + set.size());
+			System.out.format("%S Set size: %d\n", TAG, set.size());
 			for (String s : set) {
-				System.out.println("PATH: " + s);
+				System.out.format("%s PATH: %s\n", TAG, s);
 			}
 			try {
-				System.out.println("URL: " + servletConfig.getServletContext().getResource(NFLbackgroundImagePath));
+				System.out.format("%s URL: %s\n", TAG,
+						servletConfig.getServletContext().getResource(NFLbackgroundImagePath));
 			} catch (MalformedURLException e1) {
 				e1.printStackTrace();
 			}
 			GameDAO gameDAO = new GameDAO();
 			ArrayList<Game> games = gameDAO.getGames();
-			System.out.println(this.getClass().getCanonicalName() + " Writing NFL score images.  " + games.size()
-					+ " games. " + new Date());
+			System.out.format("%s Writing NFL score images. %d games. %s\n", TAG, games.size(), new Date());
 			try {
 				writeNewFeed(games);
-				System.out.println(this.getClass().getCanonicalName() + " Done. " + new Date());
+				System.out.format("%s Done.\n", TAG, new Date());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -159,37 +160,14 @@ public class StartupServlet extends HttpServlet {
 			if (year == game.getYear() && week == game.getWeek()) {
 				weekOfGames.add(game);
 			} else {
-				InputStream nflBackgroundImageInputStream = getServletContext()
-						.getResourceAsStream(NFLbackgroundImagePath);
-				NFLWeekImage nflWeekImage = new NFLWeekImage(weekOfGames, nflBackgroundImageInputStream);
-				BufferedImage bufferedImage = nflWeekImage.getBufferedImage();
-				if (!path.endsWith("/")) {
-					path = path + "/";
-				}
-				String imageFileName = path + "images/" + weekOfGames.get(0).getImageFileName();
-				File imageFile = new File(imageFileName);
-				System.out.println("About to write: " + imageFile.getAbsolutePath());
-				ImageIO.write(bufferedImage, "png", imageFile);
-				eventWriter.add(eventFactory.createStartElement(Constants.BLANK, Constants.BLANK, "item"));
-				eventWriter.add(end);
-				String title = Util.getNFLWeekTitle(weekOfGames);
-				createNode(eventWriter, Constants.TITLE, title);
-				createNode(eventWriter, Constants.DESCRIPTION, title);
-				if (Util.isNFLWeeInProgress(weekOfGames)) {
-					createNode(eventWriter, Constants.LINK, urlBase + "NFLCurrentScoresImageServlet.png");
-				} else {
-					createNode(eventWriter, Constants.LINK,
-							urlBase + "images/" + weekOfGames.get(0).getImageFileName());
-				}
-				eventWriter.add(end);
-				eventWriter.add(eventFactory.createEndElement(Constants.BLANK, Constants.BLANK, "item"));
-				eventWriter.add(end);
+				writeWeekOfGames(weekOfGames, eventWriter, path, eventFactory, urlBase, end);
 				weekOfGames = new ArrayList<Game>();
 				weekOfGames.add(game);
 				year = game.getYear();
 				week = game.getWeek();
 			}
 		}
+		writeWeekOfGames(weekOfGames, eventWriter, path, eventFactory, urlBase, end);
 		eventWriter.add(end);
 		eventWriter.add(eventFactory.createEndElement(Constants.BLANK, Constants.BLANK, "channel"));
 		eventWriter.add(end);
@@ -197,6 +175,33 @@ public class StartupServlet extends HttpServlet {
 		eventWriter.add(end);
 		eventWriter.add(eventFactory.createEndDocument());
 		eventWriter.close();
+	}
+
+	private void writeWeekOfGames(ArrayList<Game> weekOfGames, XMLEventWriter eventWriter, String path,
+			XMLEventFactory eventFactory, String urlBase, XMLEvent end) throws IOException, XMLStreamException {
+		InputStream nflBackgroundImageInputStream = getServletContext().getResourceAsStream(NFLbackgroundImagePath);
+		NFLWeekImage nflWeekImage = new NFLWeekImage(weekOfGames, nflBackgroundImageInputStream);
+		BufferedImage bufferedImage = nflWeekImage.getBufferedImage();
+		if (!path.endsWith("/")) {
+			path = path + "/";
+		}
+		String imageFileName = path + "images/" + weekOfGames.get(0).getImageFileName();
+		File imageFile = new File(imageFileName);
+		System.out.format("%s About to write: %s\n", TAG, imageFile.getAbsolutePath());
+		ImageIO.write(bufferedImage, "png", imageFile);
+		eventWriter.add(eventFactory.createStartElement(Constants.BLANK, Constants.BLANK, "item"));
+		eventWriter.add(end);
+		String title = Util.getNFLWeekTitle(weekOfGames);
+		createNode(eventWriter, Constants.TITLE, title);
+		createNode(eventWriter, Constants.DESCRIPTION, title);
+		if (Util.isNFLWeeInProgress(weekOfGames)) {
+			createNode(eventWriter, Constants.LINK, urlBase + "NFLCurrentScoresImageServlet.png");
+		} else {
+			createNode(eventWriter, Constants.LINK, urlBase + "images/" + weekOfGames.get(0).getImageFileName());
+		}
+		eventWriter.add(end);
+		eventWriter.add(eventFactory.createEndElement(Constants.BLANK, Constants.BLANK, "item"));
+		eventWriter.add(end);
 	}
 
 }
